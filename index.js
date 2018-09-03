@@ -8,23 +8,22 @@ var port = 8000
 
 app.get('/api/jsonp', function (req, res){
 
-	console.log(11111111111111111);
 	console.log(req.query);
-	const obj = {message: req.query.data}
-	res.send(req.query.callback + '('+ JSON.stringify(obj) + ');');
+	res.send(req.query.callback + '('+ JSON.stringify(req.query) + ');');
 })
 
 app.get('/widget/:name', function (req, res, next) {
 
 	var options = {
-		root: __dirname + '/widgets/',
+		root: __dirname + '/public/widgets/',
 		dotfiles: 'deny',
 		headers: {
 			'x-timestamp': Date.now(),
 			'x-sent': true
 		}
 	};
-	var fileName = req.params.name;
+
+	var fileName = req.params.name + '/script.js';
 	console.log(fileName);
 
 	res.sendFile(fileName, options, function (err) {

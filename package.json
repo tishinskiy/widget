@@ -3,10 +3,39 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-  	"server": "nodemon --exec babel-node index.js"
+    "serv": "nodemon",
+    "dev": "cross-env NODE_ENV=development gulp dev",
+    "public": "gulp build"
   },
   "license": "MIT",
   "dependencies": {
-    "express": "^4.16.3"
+    "@babel/core": "^7.0.0",
+    "@babel/register": "^7.0.0",
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.0",
+    "babel-preset-env": "2.0.0-alpha.20",
+    "browser-sync": "^2.24.6",
+    "cross-env": "^5.1.5",
+    "del": "^3.0.0",
+    "express": "^4.16.3",
+    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp-autoprefixer": "^4.1.0",
+    "gulp-babel": "^7.0.1",
+    "gulp-clean-css": "^3.9.3",
+    "gulp-concat": "^2.6.1",
+    "gulp-csso": "^3.0.0",
+    "gulp-debug": "^4.0.0",
+    "gulp-if": "^2.0.2",
+    "gulp-less": "^3.4.0",
+    "gulp-newer": "^1.4.0",
+    "gulp-plumber-notifier": "^0.0.3",
+    "gulp-pug": "^4.0.1",
+    "gulp-strip-debug": "^3.0.0",
+    "gulp-uglify": "^3.0.0",
+    "vinyl-named": "^1.1.0",
+    "webpack": "^4.17.1",
+    "webpack-stream": "^5.1.1"
   }
 }

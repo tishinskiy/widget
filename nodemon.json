@@ -1,0 +1,5 @@
+{
+	"exec": "babel-node index.js",
+	"verbose": true,
+	"ignore": ["public/*", "src/*"]
+}

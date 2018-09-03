@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Widgets</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			background: #ccc;
+			color: #333;
+			font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+			font-size: 16px;
+		}
+
+		.container {
+			max-width: 1000px;
+			margin: 0 auto;
+			padding: 15px;
+			background: #eee;
+		}
+	</style>
+</head>
+<body>
+	<div class="header-block">
+		<div class="container">
+			<!-- ---------- BEGIN REGION WIDGET ---------- -->
+			<script src="http://localhost:8000/widget/regions"></script>
+			<div id="ttk__widget-regions" class="ttk__widget ttk__widget-regions">
+				<p>REGION WIDGET</p>
+			</div>
+			<!-- ---------- END REGION WIDGET ---------- -->
+		</div>
+	</div>
+	<main class="main">
+		<div class="cards-block">
+			<div class="container">
+				<!-- ---------- BEGIN CARDS WIDGET ---------- -->
+				<script src="http://localhost:8000/widget/cards"></script>
+				<div id="ttk__widget-cards" class="ttk__widget ttk__widget-cards">
+					<p>CARDS WIDGET</p>
+				</div>
+				<!-- ---------- END CARDS WIDGET ---------- -->
+			</div>
+		</div>
+		<div class="basket-block">
+			<div class="container">
+				<!-- ---------- BEGIN BASKET WIDGET ---------- -->
+				<script src="http://localhost:8000/widget/basket"></script>
+				<div id="ttk__widget-basket" class="ttk__widget ttk__widget-basket">
+					<p>BASKET WIDGET</p>
+				</div>
+				<!-- ---------- END BASKET WIDGET ---------- -->
+			</div>
+		</div>
+		<div class="order-block">
+			<div class="container">
+				<!-- ---------- BEGIN ORDER WIDGET ---------- -->
+				<script src="http://localhost:8000/widget/order"></script>
+				<div id="ttk__widget-order" class="ttk__widget ttk__widget-order">
+					<p>ORDER WIDGET</p>
+				</div>
+				<!-- ---------- END ORDER WIDGET ---------- -->
+			</div>
+		</div>
+		<div class="container">
+		</div>
+	</main>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</body>
+</html>
