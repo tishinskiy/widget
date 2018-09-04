@@ -1,0 +1,50 @@
+
+.ttk__order-form--wrap {
+	&,
+	* {
+		margin: 0;
+		padding: 0;
+		outline: none;
+		box-sizing: border-box;
+	}
+}
+
+.ttk__order-form {
+	input {
+		&[type="text"],
+		&[type="phone"],
+		&[type="email"] {
+			width: 100%;
+			padding: 15px;
+			font-size: 1em;
+			color: inherit;
+			font-family: inherit;
+			font-weight: inherit;
+			border: 1px solid #ccc;
+
+			&:focus {
+				border-color: #777
+			}
+
+		}
+	}
+
+	button {
+		&[type='submit'] {
+			width: 100%;
+			padding: 15px;
+			font-size: 1em;
+			color: #fff;
+			font-family: inherit;
+			font-weight: inherit;
+			border: 0;
+			border-radius: 0;
+			background: #E21A1A;
+
+		}
+	}
+}
+
+.ttk__input-wrap {
+	margin-top: 15px;
+}
