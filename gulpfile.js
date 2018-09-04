@@ -58,8 +58,8 @@ const returnScripts = function(name) {
 			return gulp.src([
 				'src/widgets/' + name + '/script.js', 
 			])
-			.pipe(debug({title: "scripts"}))
-			.pipe(plumber())
+			.pipe(debug({title: "scripts-" + name}))
+			// .pipe(plumber())
 			.pipe(named())
 			.pipe(webpackStream({
 				output: {
@@ -79,9 +79,10 @@ const returnScripts = function(name) {
 				},
 				devtool: 'hidden-source-map',
 				mode
-			}))
+			}, webpack))
 
 			.pipe(gulp.dest('./public/widgets/' + name))
+			.pipe(browserSync.reload({stream: true}));
 		})
 	)
 }
@@ -118,7 +119,7 @@ const tasks = function(){
 	return arr
 }
 
-gulp.task('build', gulp.series('clean', gulp.parallel(tasks())));
+gulp.task('build', gulp.series('clean', tasks()));
 
 gulp.task('dev',
 	gulp.series('build', gulp.parallel('watch', 'serve'))
