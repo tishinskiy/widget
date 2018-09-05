@@ -1,13 +1,15 @@
-
 .ttk__order-form--wrap {
-	&,
+
+
 	* {
 		margin: 0;
 		padding: 0;
 		outline: none;
 		box-sizing: border-box;
+		color: #333;
 	}
 }
+
 
 .ttk__order-form {
 	input {
@@ -17,7 +19,7 @@
 			width: 100%;
 			padding: 15px;
 			font-size: 1em;
-			color: inherit;
+			color: #333;
 			font-family: inherit;
 			font-weight: inherit;
 			border: 1px solid #ccc;
@@ -43,8 +45,47 @@
 
 		}
 	}
-}
+	.ttk__input-wrap {
+		margin-top: 15px;
+	}
 
-.ttk__input-wrap {
-	margin-top: 15px;
+	.ttk__input-wrap__address {
+		position: relative;
+	}
+
+	.ttk__order-autocomplite {
+		background: #fff;
+		
+		position: absolute;
+		top: 100%;
+		left: 0;
+		width: 100%;
+		z-index: 10;
+	}
+
+	.ttk__order-autocomplite-item {
+		display: block;
+		padding: 15px;
+		text-decoration: none;
+		color: #333;
+		border: 1px solid #ccc;
+		border-top: 0;
+		
+		// &:not(:first-child) {
+		// 	border-top: 1px solid #ccc;
+		// }
+
+		&:not(.ttk__order-autocomplite-item__active) {
+
+			&:hover {
+				background: #004199;
+				color: #fff;
+			}
+		}
+
+		&.ttk__order-autocomplite-item__active {
+			color: #fff;
+			background: #ccc;
+		}
+	}
 }

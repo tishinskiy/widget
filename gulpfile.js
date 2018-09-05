@@ -36,21 +36,6 @@ gulp.task('templates', function() {
 
 const widgets = ['basket', 'cards', 'order', 'regions']
 
-const returnLess = function(name) {
-	gulp.task('less-' + name, function() {
-		return gulp.src('src/widgets/' + name + '/style.less')
-		.pipe(gulpIf(!isDevelopment, 
-				newer('./public/styles/')
-			))
-		.pipe(debug({title: "less"}))
-		.pipe(plumber())
-		.pipe(less())
-		.pipe(autoprefixer())
-		// .pipe(csso())
-		.pipe(gulpIf(isDevelopment, csso()))
-		.pipe(gulp.dest('./public/widgets/' + name));
-	});
-}
 
 const returnScripts = function(name) {
 	return (
@@ -74,6 +59,23 @@ const returnScripts = function(name) {
 							query: {
 								presets: ['env']
 							}
+						},
+						{
+							test: /\.less$/,
+							use: [
+								{
+									loader: 'style-loader'
+								}, 
+								{
+									loader: 'css-loader'
+								}, 
+								{
+									loader: 'less-loader', options: {
+										strictMath: true,
+										noIeCompat: true
+									}
+								}
+							]
 						}
 					],
 				},
@@ -89,14 +91,12 @@ const returnScripts = function(name) {
 
 
 for (var i = widgets.length - 1; i >= 0; i--) {
-	returnLess(widgets[i])
 	returnScripts(widgets[i])
 }
 
 gulp.task('watch', function() {
 	for (var i = widgets.length - 1; i >= 0; i--) {
-		gulp.watch('src/widgets/' + widgets[i] + '/*.js', gulp.series('scripts-' + widgets[i]))
-		gulp.watch('src/widgets/' + widgets[i] + '/*.less', gulp.series('less-' + widgets[i]))
+		gulp.watch('src/widgets/' + widgets[i] + '/**', gulp.series('scripts-' + widgets[i]))
 	}
 
 	gulp.watch('src/index.html', gulp.series('templates'));
@@ -113,7 +113,7 @@ gulp.task('serve', function() {
 const tasks = function(){
 	let arr =['templates']
 	for (var i = widgets.length - 1; i >= 0; i--) {
-		arr.push('less-'+ widgets[i])
+		// arr.push('less-'+ widgets[i])
 		arr.push('scripts-'+ widgets[i])
 	}
 	return arr
