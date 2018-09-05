@@ -20,6 +20,7 @@ const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 const named = require('vinyl-named');
 const isDevelopment = process.env.NODE_ENV != 'development';
+// var Inputmask = require('inputmask');
 
 const mode = process.env.NODE_ENV == 'development' ? 'development' : 'production'
 

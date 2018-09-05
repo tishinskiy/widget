@@ -1,9 +1,14 @@
 import 'babel-polyfill';
+
+import { _host } from "../functions/config"
+
 import invertKeySimbol from '../functions/invertKeySimbol'
 import selectLanguage from '../functions/selectLanguage'
 import sendAddress from '../functions/sendAddress'
 import addressAutocomplited from '../functions/addressAutocomplited'
 import assemblingForm from '../functions/assemblingForm'
+import formValidate from '../functions/formValidate'
+import Inputmask from "inputmask";
 
 import './style.less'
 
@@ -86,29 +91,45 @@ console.log('included widget order')
 
 		parent.append(orderFormWrap.append(orderForm))
 
-		orderForm.append(orderInputName, orderInputFamily, orderInputPhone, orderInputAddress, orderInputOfice, orderInputStreet, orderInputBuilding)
+		orderForm.append(orderInputName, orderInputFamily, orderInputPhone, orderInputAddress, orderInputOfice, orderInputStreet, orderInputBuilding, orderSendButton)
 
-		orderForm.find('input[type="text"], input[type="phone"]').each(function(){
-		})
+		const findInForm = orderForm.find('input[type="text"], input[type="phone"], button[type="submit"]')
 
-		for (var i = orderForm.find('input[type="text"], input[type="phone"]').length - 1; i >= 0; i--) {
-			const thas = orderForm.find('input[type="text"], input[type="phone"]').eq(i)
-			thas.wrap(function(){
+		for (var i = findInForm.length - 1; i >= 0; i--) {
+
+			const thas = findInForm.eq(i)
+
+			thas.wrap(() => {
 				return `<div class="ttk__input-wrap ttk__input-wrap__${thas.attr('name').replace("ttk__order-", "")}"></div>`
 			})
 
-			thas.on('input', function(){
-				thas.val(invertKeySimbol(thas.val(), selectLanguage(thas.data('language'))))
 
-				if (thas.attr('name') == 'ttk__order-address') {
+			if (thas.attr('type') == 'text' || thas.attr('type') == 'phone') {
 
-					sendAddress(thas.val(), (data) => {
-						addressAutocomplited(thas, data)
-					})
-				}
-			})
+				thas.on('input', () => {
+					thas.removeClass('ttk__input__error')
+				})
+			}
+
+			if (thas.attr('type') == 'text') {
+				thas.on('input', () => {
+					thas.val(invertKeySimbol(thas.val(), selectLanguage(thas.data('language'))))
+
+					if (thas.attr('name') == 'ttk__order-address') {
+
+						sendAddress(thas.val(), (data) => {
+							addressAutocomplited(thas, data)
+						})
+					}
+				})
+			}
+
+			if (thas.attr('type') == 'phone') {
+				var im = new Inputmask("+7 (999) 999-99-99");
+				im.mask(thas);
+			}
+
 		}
-		orderForm.append(orderSendButton)
 
 
 		$('body').on('click', '.ttk__order-autocomplite-item',function(){
@@ -132,30 +153,52 @@ console.log('included widget order')
 
 		})
 
-		// $('body').on('click', function(e){
-		// 	console.log(e.currentTarget)
-		// })
 
-		$('.ttk__input-wrap__address ').focusout(function(){
-			setTimeout( () => {
+		$(document).mouseup(function (e){
+			const div = $(".ttk__input-wrap__address")
+			if (!div.is(e.target) && div.has(e.target).length == 0) {
+				div.find('#ttk__order-autocomplite:visible').hide();
+			}
+		});
 
-				$('#ttk__order-autocomplite').hide()
-			}, 100 )
-		})
 		$('.ttk__input-wrap__address input[type="text"]').focus(function(){
 			$('#ttk__order-autocomplite').show()
 		})
 
 		orderSendButton.on('click', function(){
 
-			console.log('orderSendButton')
+			const orderComplit = (data)=> {
+				console.log(data)
+			}
 
-			let data = assemblingForm(orderForm)
+			async function sendForm() {
 
-			$.getJSON("http://10.7.0.86:8000/api/send_form?callback=?", {data: data}, resultFunc)
+				let result = await $.getJSON(`http://${ _host }/api/send_form?callback=?`, {data: assemblingForm(orderForm)}, (data) => { return data})
 
-			function resultFunc(data){
-				console.log(data);
+				return result
+
+			}
+
+			const r = formValidate()
+
+			if (!r) {
+
+				( async () => {
+
+					let s = await sendForm()
+
+					console.log(s)
+
+					if (!s) {
+						console.error(s)
+					} else {
+						console.log(s)
+					}
+
+				} )()
+
+			} else {
+				console.log(r)
 			}
 
 			return false

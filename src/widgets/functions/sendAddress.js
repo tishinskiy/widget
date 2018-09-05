@@ -1,12 +1,13 @@
+import { _host } from "../functions/config"
 let response = false 
 
-const sendAddress = (val, callback) => {
+const sendAddress = async (val, callback) => {
 
 	if (!!val && val.length >= 3) {
 
 		if (!response) {
 
-			$.getJSON("http://10.7.0.86:8000/api/send_addres?callback=?", {data: val}, resultFunc)
+			$.getJSON(`http://${ _host }/api/send_addres?callback=?`, {data: val}, resultFunc)
 
 			function resultFunc(data){
 				response = data

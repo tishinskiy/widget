@@ -1,5 +1,7 @@
-.ttk__order-form--wrap {
+#ttk__order-form--wrap.ttk__order-form--wrap {
 
+	@import url('https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i');
+	font-family: 'Roboto', sans-serif;
 
 	* {
 		margin: 0;
@@ -7,27 +9,38 @@
 		outline: none;
 		box-sizing: border-box;
 		color: #333;
+		font-weight: 300;
+		font-size: 18px;
 	}
-}
+	.ttk__order-form {
+		input {
+			&[type="text"],
+			&[type="phone"],
+			&[type="email"] {
+				width: 100%;
+				padding: 15px;
+				font-size: 1em;
+				color: #333;
+				font-family: inherit;
+				font-weight: inherit;
+				border: 1px solid #ccc;
+				cursor: pointer;
 
+				&:focus {
+					border-color: #777
+				}
 
-.ttk__order-form {
-	input {
-		&[type="text"],
-		&[type="phone"],
-		&[type="email"] {
-			width: 100%;
-			padding: 15px;
-			font-size: 1em;
-			color: #333;
-			font-family: inherit;
-			font-weight: inherit;
-			border: 1px solid #ccc;
-
-			&:focus {
-				border-color: #777
 			}
 
+			&.ttk__input__error {
+				color: #E21A1A;
+				border-color: #E21A1A;
+
+				&::placeholder {
+					color: red;
+					opacity: 0.75
+				}
+			}
 		}
 	}
 
@@ -42,7 +55,19 @@
 			border: 0;
 			border-radius: 0;
 			background: #E21A1A;
+			cursor: pointer;
+			font-size: 1em;
 
+		}
+
+		&:hover {
+			background: #D20404;
+		}
+
+		&:active {
+			position: relative;
+			top: 1px;
+			box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2) inset;
 		}
 	}
 	.ttk__input-wrap {
@@ -61,6 +86,9 @@
 		left: 0;
 		width: 100%;
 		z-index: 10;
+		// height: 100px;
+		overflow-y: scroll;
+		overflow-x: hidden;
 	}
 
 	.ttk__order-autocomplite-item {
@@ -68,12 +96,8 @@
 		padding: 15px;
 		text-decoration: none;
 		color: #333;
-		border: 1px solid #ccc;
+		border: 1px solid #ababab;
 		border-top: 0;
-		
-		// &:not(:first-child) {
-		// 	border-top: 1px solid #ccc;
-		// }
 
 		&:not(.ttk__order-autocomplite-item__active) {
 
@@ -88,4 +112,8 @@
 			background: #ccc;
 		}
 	}
+
+	
 }
+
+
