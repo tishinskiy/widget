@@ -3,7 +3,7 @@ const formValidate = () => {
 
 	const findInForm = $('#ttk__order-form').find('input[type="text"], input[type="phone"]')
 
-	for (var i = findInForm.length - 1; i >= 0; i--) {
+	for (var i = 0; i < findInForm.length; i++) {
 
 		let message = ''
 

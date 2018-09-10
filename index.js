@@ -1,40 +1,35 @@
 var express = require('express');
 var app = express();
 var port = 8000
+var _data = require('./src/controllers/addresses');
 
-app.get('/api/send_form', function (req, res){
+app.get('/api/regions', function (req, res){
+	console.log(req.headers['x-forwarded-for'] || req.connection.remoteAddress)
 	console.log(req.query.data);
-	res.send(req.query.callback + '('+ JSON.stringify(req.query.data) + ');');
+	let data = {
+		curentRegion: 'Новосибирск',
+		regions: _data.city
+	}
+	res.send(req.query.callback + '('+ JSON.stringify(data) + ')');
+})
+app.get('/api/send_form', function (req, res){
+	console.log(req.headers['x-forwarded-for'] || req.connection.remoteAddress)
+	// console.log(req.headers['x-forwarded-for'])
+	// console.log(req.connection.remoteAddress)
+	console.log(req.query.data);
+	res.send(req.query.callback + '('+ JSON.stringify('hello form') + ')');
 })
 
 app.get('/api/send_addres', function (req, res){
-	console.log(req.query.data);
+	console.log(req.headers['x-forwarded-for'] || req.connection.remoteAddress)
+	console.log(req.query.object + ' -> ' + req.query.data);
 	const data = {
 		status: 1,
 		total: 4,
 		query: req.query.data,
-		addresses: [
-			{
-				full: 'пр-кт Ленина, 103',
-				street: 'пр-кт Ленина',
-				building: '103'
-			},
-			{
-				full: 'пр-кт Ленкина, 104',
-				street: 'пр-кт Ленина',
-				building: '104'
-			},
-			{
-				full: 'пр-кт Ленкин, 105',
-				street: 'пр-кт Ленина',
-				building: '105'
-			},
-			{
-				full: 'пр-кт Ленина, 175',
-				street: 'пр-кт Ленина',
-				building: '175'
-			},
-		]
+		answer: req.query.object == 'city' ? _data[req.query.object] : _data[req.query.object].filter(function(item){
+			return item.toLowerCase().indexOf(req.query.data.toLowerCase()) != -1
+		})
 	}
 	res.send(req.query.callback + '('+ JSON.stringify(data) + ');');
 })

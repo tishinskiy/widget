@@ -4,10 +4,12 @@ import { _host } from "../functions/config"
 
 import invertKeySimbol from '../functions/invertKeySimbol'
 import selectLanguage from '../functions/selectLanguage'
-import sendAddress from '../functions/sendAddress'
-import addressAutocomplited from '../functions/addressAutocomplited'
+import autocomplitCreate from '../functions/autocomplitCreate'
+import getAutocomplit from '../functions/getAutocomplit'
 import assemblingForm from '../functions/assemblingForm'
 import formValidate from '../functions/formValidate'
+import regionCreate from '../functions/regionCreate'
+import selectAutocomplite from '../functions/selectAutocomplite'
 import Inputmask from "inputmask";
 
 import './style.less'
@@ -55,13 +57,14 @@ console.log('included widget order')
 			"data-language": "ru",
 		})
 
-		const orderInputAddress = jQuery('<input/>',{
-			type: 'text',
-			name: 'ttk__order-address',
-			placeholder: 'Улица, дом',
-			maxLength: 128,
-			"data-language": "ru",
-		})
+		// const orderInputAddress = jQuery('<input/>',{
+		// 	type: 'text',
+		// 	name: 'ttk__order-address',
+		// 	placeholder: 'Улица, дом',
+		// 	maxLength: 128,
+		// 	"data-language": "ru",
+		// 	"data-autocomplit": 3,
+		// })
 
 		const orderInputOfice = jQuery('<input/>',{
 			type: 'text',
@@ -72,15 +75,31 @@ console.log('included widget order')
 		})
 
 		const orderInputStreet = jQuery('<input/>',{
-			type: 'hidden',
+			type: 'text',
 			name: 'ttk__order-street',
+			placeholder: 'Улица',
 			maxLength: 64,
+			"data-language": "ru",
+			"data-autocomplit": 3,
+		})
+
+		const orderInputCity = jQuery('<input/>',{
+			type: 'text',
+			name: 'ttk__order-city',
+			placeholder: 'Город',
+			maxLength: 64,
+			"data-language": "ru",
+			"data-autocomplit": true,
+			"data-select": "region",
 		})
 
 		const orderInputBuilding = jQuery('<input/>',{
-			type: 'hidden',
+			type: 'text',
 			name: 'ttk__order-building',
+			placeholder: 'Дом',
 			maxLength: 64,
+			"data-language": "ru",
+			"data-autocomplit": 1,
 		})
 
 		const orderSendButton = jQuery('<button/>',{
@@ -91,7 +110,17 @@ console.log('included widget order')
 
 		parent.append(orderFormWrap.append(orderForm))
 
-		orderForm.append(orderInputName, orderInputFamily, orderInputPhone, orderInputAddress, orderInputOfice, orderInputStreet, orderInputBuilding, orderSendButton)
+		orderForm.append(...[
+			orderInputCity,
+			orderInputStreet,
+			orderInputBuilding,
+			orderInputOfice,
+			orderInputName,
+			orderInputFamily,
+			orderInputPhone,
+			// orderInputAddress,
+			orderSendButton
+		])
 
 		const findInForm = orderForm.find('input[type="text"], input[type="phone"], button[type="submit"]')
 
@@ -100,7 +129,7 @@ console.log('included widget order')
 			const thas = findInForm.eq(i)
 
 			thas.wrap(() => {
-				return `<div class="ttk__input-wrap ttk__input-wrap__${thas.attr('name').replace("ttk__order-", "")}"></div>`
+				return `<div class="ttk__input-wrap ttk__input-wrap__${thas.attr('name').replace("ttk__order-", "")}${!!thas.data('select') ? ' ttk__select-wrap' : ''}"></div>`
 			})
 
 
@@ -112,19 +141,22 @@ console.log('included widget order')
 			}
 
 			if (thas.attr('type') == 'text') {
+
 				thas.on('input', () => {
+
 					thas.val(invertKeySimbol(thas.val(), selectLanguage(thas.data('language'))))
 
-					if (thas.attr('name') == 'ttk__order-address') {
+					if (thas.data('autocomplit')) {
 
-						sendAddress(thas.val(), (data) => {
-							addressAutocomplited(thas, data)
-						})
+						getAutocomplit(thas)
+
 					}
+
 				})
 			}
 
 			if (thas.attr('type') == 'phone') {
+
 				var im = new Inputmask("+7 (999) 999-99-99");
 				im.mask(thas);
 			}
@@ -134,35 +166,68 @@ console.log('included widget order')
 
 		$('body').on('click', '.ttk__order-autocomplite-item',function(){
 
-			for (var i = $('.ttk__order-autocomplite-item').length - 1; i >= 0; i--) {
+			const block = $(this).closest('.ttk__order-autocomplite')
+
+			const item = block.find('.ttk__order-autocomplite-item')
+
+			for (var i = item.length - 1; i >= 0; i--) {
+
 				if ( i != $(this).index()) {
-					$('.ttk__order-autocomplite-item').eq(i).removeClass('ttk__order-autocomplite-item__active')
+					item.eq(i).removeClass('ttk__order-autocomplite-item__active')
 				}
 				else {
-					$('.ttk__order-autocomplite-item').eq(i).addClass('ttk__order-autocomplite-item__active')
 
+					item.eq(i).addClass('ttk__order-autocomplite-item__active')
 				}
 			}
 
-			$('input[name="ttk__order-street"]').val($(this).data('street'))
-			$('input[name="ttk__order-building"]').val($(this).data('building'))
-			orderInputAddress.val($(this).html())
-			$('#ttk__order-autocomplite').hide()
+			let input = block.prev('input')
+
+			block.prev('input')
+				.val($(this).data('value'))
+				.attr('placeholder', ($(this).data('value')))
+
+			block.hide()
 
 			return false
 
 		})
 
-
 		$(document).mouseup(function (e){
-			const div = $(".ttk__input-wrap__address")
-			if (!div.is(e.target) && div.has(e.target).length == 0) {
-				div.find('#ttk__order-autocomplite:visible').hide();
-			}
+			$('input[data-autocomplit]').each(function(){
+
+				const div = $(this).closest('div')
+				if (!div.is(e.target) && div.has(e.target).length == 0) {
+
+					div.find('[id *= "ttk__order-autocomplite__"]:visible').hide();
+				}
+			})
+
+			$('input[data-select]').each(function(){
+
+				const div = $(this).closest('div')
+				if (!div.is(e.target) && div.has(e.target).length == 0) {
+
+					if ($(this).val() == '' ) {
+						$(this).val($(this).attr('placeholder'))
+					}
+				}
+			})
 		});
 
-		$('.ttk__input-wrap__address input[type="text"]').focus(function(){
-			$('#ttk__order-autocomplite').show()
+		$('input[data-autocomplit]:not([data-select])').on('click', function(){
+
+			$(this).each(function(){
+				console.log(11111111111)
+
+				getAutocomplit ($(this), false)
+
+			})
+
+		})
+
+		$('input[data-select="region"]').on('click', function(){
+			regionCreate()
 		})
 
 		orderSendButton.on('click', function(){
@@ -179,30 +244,32 @@ console.log('included widget order')
 
 			}
 
-			const r = formValidate()
+			const result = formValidate()
 
-			if (!r) {
+			if (!result) {
 
 				( async () => {
 
-					let s = await sendForm()
+					let answer = await sendForm()
 
-					console.log(s)
-
-					if (!s) {
-						console.error(s)
+					if (!answer) {
+						console.error(answer)
 					} else {
-						console.log(s)
+						console.log(answer)
 					}
 
 				} )()
 
 			} else {
-				console.log(r)
+				console.log(result)
 			}
 
 			return false
 		})
+
+		regionCreate()
+
+
 	});
 
 })()
