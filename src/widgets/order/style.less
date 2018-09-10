@@ -18,7 +18,7 @@
 			&[type="phone"],
 			&[type="email"] {
 				width: 100%;
-				padding: 15px;
+				padding: 26px 20px 10px;
 				font-size: 1em;
 				color: #333;
 				font-family: inherit;
@@ -30,6 +30,10 @@
 					border-color: #777
 				}
 
+				&::placeholder {
+					color: #fff;
+				}
+
 			}
 
 			&.ttk__input__error {
@@ -37,7 +41,7 @@
 				border-color: #E21A1A;
 
 				&::placeholder {
-					color: red;
+					color: #E21A1A;
 					opacity: 0.75
 				}
 
@@ -67,6 +71,21 @@
 			border-right: 7px solid transparent;
 			margin-top: -5px;
 		}
+
+		&.ttk__input-wrap {
+
+			input {
+				&::placeholder {
+					color: #777;
+				}
+			}
+
+			label {
+				top: 10px;
+				font-size: 12px;
+			}
+		}
+
 	}
 
 	button {
@@ -82,7 +101,6 @@
 			background: #E21A1A;
 			cursor: pointer;
 			font-size: 1em;
-
 		}
 
 		&:hover {
@@ -94,14 +112,25 @@
 			top: 1px;
 			box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2) inset;
 		}
+
 	}
 	.ttk__input-wrap {
 		margin-top: 15px;
 		position: relative;
+
+		label {
+			position: absolute;
+			top: 19px;
+			left: 20px;
+			transition: 0.2s linear;
+
+			&.ttk__order-input__focused {
+				top: 10px;
+				font-size: 12px;
+			}
+		}
 	}
 
-	.ttk__input-wrap__address {
-	}
 
 	.ttk__order-autocomplite {
 		background: #fff;
@@ -112,6 +141,7 @@
 		width: 100%;
 		z-index: 10;
 		box-shadow: 0 -1px 0 #ababab inset;
+		transition: 0.2s linear;
 
 		&.ttk__order-autocomplite__limitted {
 			

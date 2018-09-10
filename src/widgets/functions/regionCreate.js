@@ -15,7 +15,7 @@ const regionCreate = () => {
 			const input_name = obj.attr('name').replace("ttk__order-", "")
 			const data = answer.regions
 
-			if (obj.attr( 'placeholder') == 'Город') {
+			if (obj.attr( 'placeholder') == 'Выберите город') {
 
 				obj.val(answer.curentRegion)
 				obj.attr( 'placeholder',answer.curentRegion)

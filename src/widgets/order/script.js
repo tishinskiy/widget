@@ -36,7 +36,8 @@ console.log('included widget order')
 		const orderInputName = jQuery('<input/>',{
 			type: 'text',
 			name: 'ttk__order-name',
-			placeholder: 'Имя',
+			"data-label": "Имя",
+			// placeholder: 'Имя',
 			maxLength: 64,
 			"data-language": "ru",
 		})
@@ -44,7 +45,8 @@ console.log('included widget order')
 		const orderInputFamily = jQuery('<input/>',{
 			type: 'text',
 			name: 'ttk__order-family',
-			placeholder: 'Фамилия',
+			"data-label": "Фамилия",
+			// placeholder: 'Фамилия',
 			maxLength: 64,
 			"data-language": "ru",
 		})
@@ -52,7 +54,8 @@ console.log('included widget order')
 		const orderInputPhone = jQuery('<input/>',{
 			type: 'phone',
 			name: 'ttk__order-phone',
-			placeholder: 'Телефон',
+			"data-label": "Телефон",
+			// placeholder: 'Телефон',
 			maxLength: 64,
 			"data-language": "ru",
 		})
@@ -60,7 +63,7 @@ console.log('included widget order')
 		// const orderInputAddress = jQuery('<input/>',{
 		// 	type: 'text',
 		// 	name: 'ttk__order-address',
-		// 	placeholder: 'Улица, дом',
+			// placeholder: 'Улица, дом',
 		// 	maxLength: 128,
 		// 	"data-language": "ru",
 		// 	"data-autocomplit": 3,
@@ -69,7 +72,8 @@ console.log('included widget order')
 		const orderInputOfice = jQuery('<input/>',{
 			type: 'text',
 			name: 'ttk__order-ofice',
-			placeholder: 'Кв.',
+			"data-label": "Кв.",
+			// placeholder: 'Кв.',
 			maxLength: 8,
 			"data-language": "ru",
 		})
@@ -77,7 +81,8 @@ console.log('included widget order')
 		const orderInputStreet = jQuery('<input/>',{
 			type: 'text',
 			name: 'ttk__order-street',
-			placeholder: 'Улица',
+			"data-label": "Улица",
+			// placeholder: 'Улица',
 			maxLength: 64,
 			"data-language": "ru",
 			"data-autocomplit": 3,
@@ -86,7 +91,8 @@ console.log('included widget order')
 		const orderInputCity = jQuery('<input/>',{
 			type: 'text',
 			name: 'ttk__order-city',
-			placeholder: 'Город',
+			"data-label": "Город",
+			placeholder: 'Выберите город',
 			maxLength: 64,
 			"data-language": "ru",
 			"data-autocomplit": true,
@@ -96,7 +102,8 @@ console.log('included widget order')
 		const orderInputBuilding = jQuery('<input/>',{
 			type: 'text',
 			name: 'ttk__order-building',
-			placeholder: 'Дом',
+			"data-label": "Дом",
+			// placeholder: 'Дом',
 			maxLength: 64,
 			"data-language": "ru",
 			"data-autocomplit": 1,
@@ -131,6 +138,10 @@ console.log('included widget order')
 			thas.wrap(() => {
 				return `<div class="ttk__input-wrap ttk__input-wrap__${thas.attr('name').replace("ttk__order-", "")}${!!thas.data('select') ? ' ttk__select-wrap' : ''}"></div>`
 			})
+
+			if (!!thas.data('label')) {
+				thas.before(`<label>${thas.data('label')}<label>`)
+			}
 
 
 			if (thas.attr('type') == 'text' || thas.attr('type') == 'phone') {
@@ -185,9 +196,17 @@ console.log('included widget order')
 
 			block.prev('input')
 				.val($(this).data('value'))
-				.attr('placeholder', ($(this).data('value')))
 
-			block.hide()
+				if (block.prev('input').data('select') == 'region') {
+					
+					orderInputCity.attr('placeholder', ($(this).data('value')))
+
+					orderInputStreet.val('')
+					orderInputBuilding.val('')
+					orderInputOfice.val('')
+				}
+
+			block.height()
 
 			return false
 
@@ -199,7 +218,7 @@ console.log('included widget order')
 				const div = $(this).closest('div')
 				if (!div.is(e.target) && div.has(e.target).length == 0) {
 
-					div.find('[id *= "ttk__order-autocomplite__"]:visible').hide();
+					div.find('[id *= "ttk__order-autocomplite__"]:visible').slideUp('fast');
 				}
 			})
 
@@ -218,10 +237,7 @@ console.log('included widget order')
 		$('input[data-autocomplit]:not([data-select])').on('click', function(){
 
 			$(this).each(function(){
-				console.log(11111111111)
-
 				getAutocomplit ($(this), false)
-
 			})
 
 		})
@@ -229,6 +245,17 @@ console.log('included widget order')
 		$('input[data-select="region"]').on('click', function(){
 			regionCreate()
 		})
+
+		$('input[type="text"]:not([data-select]), input[type="phone"]')
+			.on('focus', function(){
+				$(this).prev('label').addClass('ttk__order-input__focused')
+			})
+
+			.on('focusout', function() {
+				if ($(this).val() == '') {
+					$(this).prev('label').removeClass('ttk__order-input__focused')
+				}
+			})
 
 		orderSendButton.on('click', function(){
 
