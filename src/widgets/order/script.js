@@ -72,7 +72,7 @@ console.log('included widget order')
 		const orderInputOfice = jQuery('<input/>',{
 			type: 'text',
 			name: 'ttk__order-ofice',
-			"data-label": "Кв.",
+			"data-label": "Квартира",
 			// placeholder: 'Кв.',
 			maxLength: 8,
 			"data-language": "ru",
@@ -143,6 +143,8 @@ console.log('included widget order')
 				thas.before(`<label>${thas.data('label')}<label>`)
 			}
 
+			thas.attr('tabindex', i + 1)
+
 
 			if (thas.attr('type') == 'text' || thas.attr('type') == 'phone') {
 
@@ -168,11 +170,17 @@ console.log('included widget order')
 
 			if (thas.attr('type') == 'phone') {
 
-				var im = new Inputmask("+7 (999) 999-99-99");
+				var im = new Inputmask("+7 (999) 999-99-99", {
+					showMaskOnHover: false
+				});
 				im.mask(thas);
 			}
 
 		}
+
+		// $('.ttk__input-wrap').focusout(function(){
+		// 	$(this).find('.ttk__order-autocomplite').hide()
+		// })
 
 
 		$('body').on('click', '.ttk__order-autocomplite-item',function(){
@@ -201,12 +209,12 @@ console.log('included widget order')
 					
 					orderInputCity.attr('placeholder', ($(this).data('value')))
 
-					orderInputStreet.val('')
-					orderInputBuilding.val('')
-					orderInputOfice.val('')
+					orderInputStreet.val('').prev('label').removeClass('ttk__order-input__focused')
+					orderInputBuilding.val('').prev('label').removeClass('ttk__order-input__focused')
+					orderInputOfice.val('').prev('label').removeClass('ttk__order-input__focused')
 				}
 
-			block.height()
+			block.hide()
 
 			return false
 
@@ -218,7 +226,7 @@ console.log('included widget order')
 				const div = $(this).closest('div')
 				if (!div.is(e.target) && div.has(e.target).length == 0) {
 
-					div.find('[id *= "ttk__order-autocomplite__"]:visible').slideUp('fast');
+					div.find('[id *= "ttk__order-autocomplite__"]:visible').hide();
 				}
 			})
 
@@ -249,6 +257,8 @@ console.log('included widget order')
 		$('input[type="text"]:not([data-select]), input[type="phone"]')
 			.on('focus', function(){
 				$(this).prev('label').addClass('ttk__order-input__focused')
+
+				$('.ttk__order-autocomplite').not($(this).next()).hide()
 			})
 
 			.on('focusout', function() {
