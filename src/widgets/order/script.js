@@ -1,6 +1,6 @@
 import 'babel-polyfill';
 
-import { _host } from "../functions/config"
+import { _host, _state } from "../functions/config"
 
 import invertKeySimbol from '../functions/invertKeySimbol'
 import selectLanguage from '../functions/selectLanguage'
@@ -9,7 +9,8 @@ import getAutocomplit from '../functions/getAutocomplit'
 import assemblingForm from '../functions/assemblingForm'
 import formValidate from '../functions/formValidate'
 import regionCreate from '../functions/regionCreate'
-import selectAutocomplite from '../functions/selectAutocomplite'
+// import selectAutocomplite from '../functions/selectAutocomplite'
+import revisionOne from '../functions/revisionOne'
 import Inputmask from "inputmask";
 
 import './style.less'
@@ -20,17 +21,20 @@ console.log('included widget order')
 
 	document.addEventListener("DOMContentLoaded", function() {
 
+		revisionOne()
+
 		const parent = $('#ttk__widget-order')
 		parent.html('')
 
 		const orderFormWrap = jQuery('<div/>',{
 			id: 'ttk__order-form--wrap',
-			class: 'ttk__order-form--wrap'
+			class: 'ttk__order-form--wrap',
+			"autocomplete": "off"
 		})
 
-		const orderForm = jQuery('<form/>',{
+		const orderForm = jQuery('<div/>',{
 			id: 'ttk__order-form',
-			class: 'ttk__order-form'
+			class: 'ttk__order-form',
 		})
 
 		const orderInputName = jQuery('<input/>',{
@@ -40,6 +44,7 @@ console.log('included widget order')
 			// placeholder: 'Имя',
 			maxLength: 64,
 			"data-language": "ru",
+			"autocomplete": "off"
 		})
 
 		const orderInputFamily = jQuery('<input/>',{
@@ -49,15 +54,17 @@ console.log('included widget order')
 			// placeholder: 'Фамилия',
 			maxLength: 64,
 			"data-language": "ru",
+			"autocomplete": "off"
 		})
 
 		const orderInputPhone = jQuery('<input/>',{
-			type: 'phone',
+			type: 'text',
 			name: 'ttk__order-phone',
 			"data-label": "Телефон",
 			// placeholder: 'Телефон',
 			maxLength: 64,
 			"data-language": "ru",
+			"autocomplete": "off"
 		})
 
 		// const orderInputAddress = jQuery('<input/>',{
@@ -76,6 +83,8 @@ console.log('included widget order')
 			// placeholder: 'Кв.',
 			maxLength: 8,
 			"data-language": "ru",
+			"autocomplete": "off",
+			"disabled": true
 		})
 
 		const orderInputStreet = jQuery('<input/>',{
@@ -86,6 +95,7 @@ console.log('included widget order')
 			maxLength: 64,
 			"data-language": "ru",
 			"data-autocomplit": 3,
+			"autocomplete": "off"
 		})
 
 		const orderInputCity = jQuery('<input/>',{
@@ -97,6 +107,7 @@ console.log('included widget order')
 			"data-language": "ru",
 			"data-autocomplit": true,
 			"data-select": "region",
+			"autocomplete": "off"
 		})
 
 		const orderInputBuilding = jQuery('<input/>',{
@@ -115,21 +126,49 @@ console.log('included widget order')
 			html: 'Оформить',
 		})
 
+		const stepOneWrap = jQuery('<div/>',{
+			id: "ttk__order-step__one",
+			class: "ttk__order-step ttk__order-step__one"
+		})
+
+		const stepTwoWrap = jQuery('<div/>',{
+			id: "ttk__order-step__two",
+			class: "ttk__order-step ttk__order-step__two"
+		})
+
 		parent.append(orderFormWrap.append(orderForm))
 
-		orderForm.append(...[
-			orderInputCity,
-			orderInputStreet,
-			orderInputBuilding,
-			orderInputOfice,
-			orderInputName,
-			orderInputFamily,
-			orderInputPhone,
-			// orderInputAddress,
-			orderSendButton
-		])
+		orderForm.append( stepOneWrap.append(
+				
+				orderInputCity,
+				orderInputStreet,
+				orderInputBuilding,
+				orderInputOfice,
+			), 
+			stepTwoWrap.append(
+				orderInputName,
+				orderInputFamily,
+				orderInputPhone,
+				orderSendButton
+			)
+		)
 
-		const findInForm = orderForm.find('input[type="text"], input[type="phone"], button[type="submit"]')
+		// revisionOne([
+		// 	$('input[name="ttk__order-city"]'), 
+		// 	$('input[name="ttk__order-street"]'), 
+		// 	$('input[name="ttk__order-building"]'), 
+		// 	$('input[name="ttk__order-ofice"]')
+		// ])
+
+		$('input[name="ttk__order-city"]').revisionItem([], [$('input[name="ttk__order-street"]'), $('input[name="ttk__order-building"]')])
+		$('input[name="ttk__order-street"]').revisionItem([$('input[name="ttk__order-city"]'),], [ $('input[name="ttk__order-building"]')])
+		$('input[name="ttk__order-building"]').revisionItem([$('input[name="ttk__order-street"]'), $('input[name="ttk__order-city"]')], [])
+
+		if (!('formValue' in state)) {
+			state.formValue = []
+		}
+
+		const findInForm = orderForm.find('input[type="text"], input[type="number"], button[type="submit"]')
 
 		for (var i = findInForm.length - 1; i >= 0; i--) {
 
@@ -150,6 +189,14 @@ console.log('included widget order')
 
 				thas.on('input', () => {
 					thas.removeClass('ttk__input__error')
+					thas.val(thas.val().replace(/^\s+/g, '').replace(/ {1,}/g," "))
+				})
+
+				thas.on('keydown' , (e) => {
+
+					if (e.keyCode == 9 ) {
+						thas.revisionFocusout()
+					}
 				})
 			}
 
@@ -168,7 +215,7 @@ console.log('included widget order')
 				})
 			}
 
-			if (thas.attr('type') == 'phone') {
+			if (thas.attr('name') == 'ttk__order-phone') {
 
 				var im = new Inputmask("+7 (999) 999-99-99", {
 					showMaskOnHover: false
@@ -184,6 +231,8 @@ console.log('included widget order')
 
 
 		$('body').on('click', '.ttk__order-autocomplite-item',function(){
+
+			if (!('formValue' in _state)) { _state.formValue = [] }
 
 			const block = $(this).closest('.ttk__order-autocomplite')
 
@@ -203,30 +252,69 @@ console.log('included widget order')
 			let input = block.prev('input')
 
 			block.prev('input')
-				.val($(this).data('value'))
 
-				if (block.prev('input').data('select') == 'region') {
-					
-					orderInputCity.attr('placeholder', ($(this).data('value')))
+				setTimeout(()=>{ block.hide() },0);
 
-					orderInputStreet.val('').prev('label').removeClass('ttk__order-input__focused')
-					orderInputBuilding.val('').prev('label').removeClass('ttk__order-input__focused')
-					orderInputOfice.val('').prev('label').removeClass('ttk__order-input__focused')
+
+				console.log(777777777)
+
+				const f2 = (r)=> {
+					input.revisionFocusout()
 				}
 
-			block.hide()
+				const f1 = (cb) => {
+					
+					setTimeout(()=>{
+						
+						input.val($(this).data('value'))
+						input.data('verified', 1)
+						cb()
+
+					},0)
+				}
+
+				f1(f2)
+
+				if(!!($(this).data('external'))) {
+					
+					_state.formValue[input.attr('name').replace("ttk__order-", "")] = $(this).data('external')
+				}
+
+				if(!!($(this).data('street'))) {
+
+					_state.formValue[input.attr('name').replace("ttk__order-", "")] = $(this).data('street')
+				}
+
+
+				if (!!$(this).data('internal')) {
+					_state.cityInternal = $(this).data('internal')
+				}
+
+				if ($(this).data('tc') != undefined) {
+				console.log($(this).data('tc'))
+					_state.tc = $(this).data('tc')
+				}
+
+				console.log($(this).data())
 
 			return false
 
 		})
 
-		$(document).mouseup(function (e){
+		$(document).on('mouseup', function (e){
 			$('input[data-autocomplit]').each(function(){
 
 				const div = $(this).closest('div')
+
 				if (!div.is(e.target) && div.has(e.target).length == 0) {
 
-					div.find('[id *= "ttk__order-autocomplite__"]:visible').hide();
+					if (div.find('[id *= "ttk__order-autocomplite__"]:visible').length) {
+
+						div.find('[id *= "ttk__order-autocomplite__"]:visible').hide();
+
+						$(this).revisionFocusout()
+					}
+
 				}
 			})
 
@@ -254,6 +342,7 @@ console.log('included widget order')
 			regionCreate()
 		})
 
+
 		$('input[type="text"]:not([data-select]), input[type="phone"]')
 			.on('focus', function(){
 				$(this).prev('label').addClass('ttk__order-input__focused')
@@ -266,6 +355,11 @@ console.log('included widget order')
 					$(this).prev('label').removeClass('ttk__order-input__focused')
 				}
 			})
+		// $('input[type="text"], input[type="phone"]').on('focusout', function(){
+		// 	setTimeout(function(){
+		// 		console.log(55555555555)
+		// 	} , 1000)
+		// })
 
 		orderSendButton.on('click', function(){
 

@@ -16,15 +16,19 @@
 		input {
 			&[type="text"],
 			&[type="phone"],
+			&[type="number"],
 			&[type="email"] {
 				width: 100%;
 				padding: 26px 20px 10px;
 				font-size: 1em;
 				color: #333;
-				font-family: inherit;
-				font-weight: inherit;
+				font-family: 'Roboto', sans-serif;
+				font-weight: 300;
 				border: 1px solid #ccc;
 				cursor: pointer;
+				background: transparent;
+				position: relative;
+				z-index: 2;
 
 				&:focus {
 					border-color: #777
@@ -32,6 +36,12 @@
 
 				&::placeholder {
 					color: #fff;
+				}
+
+				&:disabled {
+					color: #E21A1A;
+					// background: #777;
+					// opacity: 0.25;
 				}
 
 			}
@@ -117,16 +127,54 @@
 	.ttk__input-wrap {
 		margin-top: 15px;
 		position: relative;
+		background: #fff;
 
 		label {
 			position: absolute;
 			top: 19px;
 			left: 20px;
 			transition: 0.2s linear;
+			z-index: 1;
 
 			&.ttk__order-input__focused {
 				top: 10px;
 				font-size: 12px;
+			}
+		}
+
+		@keyframes ttk__rotate {
+			from {transform: rotate(0deg);}
+			to {transform: rotate(360deg);}
+		}
+
+		/* The element to apply the animation to */
+		// div {
+		//     width: 100px;
+		//     height: 100px;
+		//     background-color: red;
+		//     animation-name: example;
+		//     animation-duration: 4s;
+		// }
+
+		&.ttk__input-revision {
+			&:after {
+				content: '';
+				position: absolute;
+				width: 30px;
+				height: 30px;
+				border-radius: 50%;
+				border-top: 2px solid #999;
+				// border-bottom: 4px solid #E21A1A;
+				// border-left: 4px solid #E21A1A;
+				border-right: 2px solid transparent;
+				top: 50%;
+				left: 50%;
+				margin-top: -15px;
+				margin-left: -15px;
+				animation-name: ttk__rotate;
+				animation-duration: 0.5s;
+				animation-iteration-count: infinite;
+				animation-timing-function: linear;
 			}
 		}
 	}
@@ -184,6 +232,38 @@
 			color: #005AD5;
 		}
 	}
-}
+	.ttk__service-message {
+		margin-top: 15px;
+		padding: 15px;
+		text-align: center;
+		font-size: 18px;
+		
+		* {
+			color: #fff;
+		}
 
+		&.ttk__service-message__error {
+			background: #FF4949;
+			
+		}
+		&.ttk__service-message__service {
+			background: #698231;
+
+			.ttk__service-block {
+				margin-top: 15px;
+				display: flex;
+				flex-flow: row nowrap;
+				justify-content: center;
+			}
+
+			.ttk__service-name {
+				&:not(:last-child) {
+					margin-right: 40px;
+				}
+			}
+		}
+	}
+
+	
+}
 

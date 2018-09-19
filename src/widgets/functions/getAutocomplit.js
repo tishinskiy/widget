@@ -2,23 +2,40 @@ import { _state } from "./config"
 import autocompliteHeight from './autocompliteHeight'
 import sendAddress from './sendAddress'
 import autocomplitCreate from './autocomplitCreate'
+import findInData from './findInData'
 
 const getAutocomplit = (obj) => {
 
 	if ( ! ('autocomlite' in _state)) {_state.autocomlite = {}}
 
-	const input_name = obj.attr('name').replace("ttk__order-", "")
-	const input_val = obj.val()
+	const inputName = obj.attr('name').replace("ttk__order-", "")
+	const inputValue = obj.val()
+	const maxLength = obj.data('autocomplit') ? obj.data('autocomplit') : 1
 
 	const getData = async ( val ) => {
 
 		let result = await sendAddress(obj)
 
-		return autocomplitCreate( obj, _state.autocomlite[input_name] = result )
+		return autocomplitCreate( obj, _state.autocomlite[inputName] = result )
+
 
 	}
 
-	console.log(obj.data('select'))
+	let data
+
+	if (inputName == 'street') {
+		data = {
+			city: _state.cityInternal, 
+			search: inputValue.toLowerCase().substring(0, maxLength)
+		}
+	}
+
+	if (inputName == 'building') {
+		data = {
+			street: _state.formValue.street
+		}
+	}
+
 
 	if (!!obj.data('select')) {
 
@@ -26,30 +43,32 @@ const getAutocomplit = (obj) => {
 
 	} else {
 
-		if ( ! ( input_val.length < ( !!obj.data('autocomplit') ? obj.data('autocomplit') : 1 ) ) ) {
+		if ( ! ( inputValue.length < ( !!obj.data('autocomplit') ? obj.data('autocomplit') : 1 ) ) ) {
 
-			if ( "autocomlite" in _state && input_name in _state.autocomlite) {
+			if ( "autocomlite" in _state && inputName in _state.autocomlite) {
 
-				if ( _state.autocomlite[ input_name ].query == input_val
-					|| input_val.toLowerCase().indexOf(_state.autocomlite[ input_name ].query.toLowerCase() ) != -1) {
+				const inState = findInData(data, _state.autocomlite[inputName])
 
-					autocomplitCreate( obj, _state.autocomlite[ input_name ] )
+				if (!!inState) {
+
+					autocomplitCreate( obj, inState )
 
 				} else {
-					getData(input_val)
+					getData(inputValue)
 
 				}
 
 			} else {
 
-				getData(input_val)
+				getData(inputValue)
 
 			}
-
+		} else {
+			obj.next('.ttk__order-autocomplite').hide()
 		}
+
+
 	}
-
-
 }
 
 export default getAutocomplit

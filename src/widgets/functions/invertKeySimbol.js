@@ -6,8 +6,9 @@ const invertKeySimbol = (val, lang) => {
 
 		const pos = lang[0].indexOf(item.toLowerCase()) 
 
+
 		if (pos != -1) {
-			result += arr[i] == arr[i].toUpperCase() ? lang[1][pos].toUpperCase() : lang[1][pos]
+			result += ((lang[1][pos].toUpperCase()) == lang[1][pos]) ? lang[1][pos].toUpperCase() : lang[1][pos]
 		}
 		else {
 			result += item
